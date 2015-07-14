@@ -1,0 +1,2 @@
+# ngRemoteValidate
+Angular Ajax Validation
