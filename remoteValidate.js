@@ -4,7 +4,7 @@
         throw 'Missing something? Please add angular.js to your project or move this script below the angular.js reference';
     }
 
-    var directiveId = 'ngRemoteValidate',
+    var directiveId = 'remoteValidate',
         remoteValidate = function ($http, $timeout, $q) {
             return {
                 restrict: 'A',
@@ -28,24 +28,24 @@
 
                     angular.extend(options, attrs);
                     /// TODO: Use Cain of Responsibility to reduce complexity.
-                    if (options.ngRemoteValidate.charAt(0) === '[') {
-                        options.urls = eval(options.ngRemoteValidate);
+                    if (options.remoteValidate.charAt(0) === '[') {
+                        options.urls = eval(options.remoteValidate);
                     }
-                    else if (options.ngRemoteValidate.charAt(0) === '{') {
-                        options.keys = eval('(' + options.ngRemoteValidate + ')');
+                    else if (options.remoteValidate.charAt(0) === '{') {
+                        options.keys = eval('(' + options.remoteValidate + ')');
                         options.urls = Object.keys(options.keys);
                     }
-                    else if (options.ngRemoteValidate.charAt(0) === '(') {
-                        var opt = eval(options.ngRemoteValidate.replace(/\(/g,"[").replace(/\)/g,"]"));
+                    else if (options.remoteValidate.charAt(0) === '(') {
+                        var opt = eval(options.remoteValidate.replace(/\(/g,"[").replace(/\)/g,"]"));
                         options.urls = [opt[0]];
                         options.keys = opt[1];
                     }
                     else {
-                        options.urls = [options.ngRemoteValidate];
+                        options.urls = [options.remoteValidate];
                     }
 
                     addToCache = function (response) {
-                        var value = response[0].data.value;
+                        var value = response[0].data.message;
                         if (cache[value]) return cache[value];
                         cache[value] = response;
                     };
@@ -69,7 +69,8 @@
                         var i = 0,
                             l = response.length,
                             useKeys = options.hasOwnProperty('keys'),
-                            isValid = true;
+                            isValid = true
+                            ;
                         for (; i < l; i++) {
 
                             if (scope.ngRemoteInterceptors && scope.ngRemoteInterceptors.response) {
@@ -121,8 +122,8 @@
                             return setValidation(cache[value], true);
                         }
 
-                        //Set processing now, before the delay.
-                        //Check first to reduce DOM updates
+                        /// Set processing now, before the delay.
+                        /// Check first to reduce DOM updates
                         if (!ngModel.$pending) {
                             ngModel.$processing = ngModel.$pending = ngForm.$pending = true;
                         }
@@ -174,8 +175,10 @@
             };
         };
 
-    angular.module('remoteValidation', [])
-        .constant('MODULE_VERSION', '##_version_##')
-        .directive(directiveId, ['$http', '$timeout', '$q', remoteValidate]);
+    angular
+        .module('remoteValidate',[])
+        .constant('MODULE_VERSION','1.0.0')
+        .directive(directiveId, ['$http','$timeout','$q',remoteValidate])
+    ;
 
-})(this.angular);
+})(angular);
